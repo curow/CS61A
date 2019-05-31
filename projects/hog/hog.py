@@ -259,7 +259,12 @@ def make_averaged(fn, num_samples=1000):
     3.0
     """
     # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
+    def average_fn(*args):
+        res = 0
+        for _ in range(num_samples):
+            res += fn(*args)
+        return res/num_samples
+    return average_fn
     # END PROBLEM 8
 
 
@@ -273,7 +278,13 @@ def max_scoring_num_rolls(dice=six_sided, num_samples=1000):
     1
     """
     # BEGIN PROBLEM 9
-    "*** YOUR CODE HERE ***"
+    max_score, optimal_rolls = 0, 0
+    for i in range(1, 10+1):
+        score = make_averaged(roll_dice, num_samples)(i, dice)
+        if score > max_score:
+            max_score = score
+            optimal_rolls = i
+    return optimal_rolls
     # END PROBLEM 9
 
 
@@ -302,16 +313,16 @@ def run_experiments():
         six_sided_max = max_scoring_num_rolls(six_sided)
         print('Max scoring num rolls for six-sided dice:', six_sided_max)
 
-    if False:  # Change to True to test always_roll(8)
+    if True:  # Change to True to test always_roll(8)
         print('always_roll(8) win rate:', average_win_rate(always_roll(8)))
 
-    if False:  # Change to True to test bacon_strategy
+    if True:  # Change to True to test bacon_strategy
         print('bacon_strategy win rate:', average_win_rate(bacon_strategy))
 
-    if False:  # Change to True to test swap_strategy
+    if True:  # Change to True to test swap_strategy
         print('swap_strategy win rate:', average_win_rate(swap_strategy))
 
-    if False:  # Change to True to test final_strategy
+    if True:  # Change to True to test final_strategy
         print('final_strategy win rate:', average_win_rate(final_strategy))
 
     "*** You may add additional experiments as you wish ***"
@@ -322,7 +333,9 @@ def bacon_strategy(score, opponent_score, margin=8, num_rolls=4):
     rolls NUM_ROLLS otherwise.
     """
     # BEGIN PROBLEM 10
-    return 4  # Replace this statement
+    if free_bacon(opponent_score) >= margin:
+        return 0
+    return num_rolls
     # END PROBLEM 10
 
 
@@ -332,17 +345,41 @@ def swap_strategy(score, opponent_score, margin=8, num_rolls=4):
     non-beneficial swap. Otherwise, it rolls NUM_ROLLS.
     """
     # BEGIN PROBLEM 11
-    return 4  # Replace this statement
+    bacon_score = free_bacon(opponent_score)
+    whole_score = score + bacon_score
+    bacon_swap = is_swap(whole_score, opponent_score)
+    if bacon_swap and whole_score <= opponent_score:
+        return 0
+    elif not bacon_swap and bacon_score >= margin:
+        return 0
+    else:
+        return num_rolls
     # END PROBLEM 11
 
 
-def final_strategy(score, opponent_score):
+def final_strategy(score, opponent_score, goal_score=GOAL_SCORE ):
     """Write a brief description of your final strategy.
 
-    *** YOUR DESCRIPTION HERE ***
+    based on swap strategy
     """
     # BEGIN PROBLEM 12
-    return 4  # Replace this statement
+    # num_rolls = max(3, (goal_score - score)//10 - 4)
+    num_rolls = 4
+    bacon_score = free_bacon(opponent_score)
+    whole_score = score + bacon_score
+    score_needed = abs(goal_score - whole_score) 
+    margin = min(score_needed, 8)
+    bacon_swap = is_swap(whole_score, opponent_score)
+    if bacon_swap and whole_score <= opponent_score:
+        return 0
+    elif not bacon_swap and bacon_score >= margin: 
+        return 0
+    elif score_needed <= 3:
+        return 1
+    elif score_needed <= 6:
+        return 2
+    else:
+        return num_rolls
     # END PROBLEM 12
 
 
