@@ -37,3 +37,6 @@ def mfib(x):
     if x in (0, 1):
         return x
     return mfib(x-1) + mfib(x-2)
+
+# now fib is same as mfib, we can compare it with msfib
+fib = memoize(fib)
