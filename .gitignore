@@ -28,3 +28,7 @@ Temporary Items
 
 # Python cache file
 *.pyc
+
+# CS61A autograde cache file
+.ok_history
+.ok_storage
