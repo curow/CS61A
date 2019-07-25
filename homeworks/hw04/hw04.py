@@ -26,7 +26,7 @@ def taxicab(a, b):
     >>> taxicab(ess_a_bagel, times_square)
     9
     """
-    "*** YOUR CODE HERE ***"
+    return abs(street(a) - street(b)) + abs(avenue(a) - avenue(b))
 
 def squares(s):
     """Returns a new list containing square roots of the elements of the
@@ -39,7 +39,9 @@ def squares(s):
     >>> squares(seq)
     []
     """
-    "*** YOUR CODE HERE ***"
+    from math import sqrt
+    return [round(sqrt(x)) for x in s if round(sqrt(x)) == sqrt(x)]
+    
 
 def g(n):
     """Return the value of G(n), computed recursively.
@@ -58,7 +60,10 @@ def g(n):
     >>> check(HW_SOURCE_FILE, 'g', ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    if n <= 3:
+        return n
+    else:
+        return g(n - 1) + 2 * g(n - 2) + 3 * g(n - 3)
 
 def g_iter(n):
     """Return the value of G(n), computed iteratively.
@@ -77,7 +82,16 @@ def g_iter(n):
     >>> check(HW_SOURCE_FILE, 'g_iter', ['Recursion'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    if n <= 3:
+        return n
+    else:
+        t, t1, t2, t3 = 0, 1, 2, 3
+        for i in range(4, n + 1):
+            t = t3 + 2 * t2 + 3 * t1
+            t1 = t2
+            t2 = t3
+            t3 = t
+        return t
 
 def count_change(amount):
     """Return the number of ways to make change for amount.
@@ -94,7 +108,16 @@ def count_change(amount):
     >>> check(HW_SOURCE_FILE, 'count_change', ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    from math import floor, log2 
+    def count_helper(n, k):
+        if n < 0:
+            return 0
+        elif n == 0 or k == 0:
+            return 1
+        else:
+            return count_helper(n - 2**k, k) + count_helper(n, k - 1)
+    k = floor(log2(amount))
+    return count_helper(amount, k)
 
 def print_move(origin, destination):
     """Print instructions to move a disk."""
@@ -128,7 +151,13 @@ def move_stack(n, start, end):
     Move the top disk from rod 1 to rod 3
     """
     assert 1 <= start <= 3 and 1 <= end <= 3 and start != end, "Bad start/end"
-    "*** YOUR CODE HERE ***"
+    if n == 1:
+        print_move(start, end)
+    else:
+        temp = 6 - start - end
+        move_stack(n - 1, start, temp)
+        move_stack(1, start, end)
+        move_stack(n - 1, temp, end)
 
 ###################
 # Extra Questions #
@@ -145,4 +174,9 @@ def make_anonymous_factorial():
     >>> check(HW_SOURCE_FILE, 'make_anonymous_factorial', ['Assign', 'AugAssign', 'FunctionDef', 'Recursion'])
     True
     """
-    return 'YOUR_EXPRESSION_HERE'
+    # failed to solve it, below is the offical solution
+    # 对解法的理解：关键在于构造出一个将函数作为输入的高阶函数（下面的第二部分），
+    # 然后给这个高阶函数一个名字f,将f作为参数传给f自身（第一部分），从而使得f这个
+    # name总是指向我们构造的高阶函数。之所以这么麻烦都是因为这个高阶函数是用lambda
+    # 表达式构造的，它并没有一个intrinsic name可以在构造的时候就引用。
+    return (lambda f : lambda k : f(f, k))(lambda f, k : 1 if k == 0 else mul(k, f(f, sub(k, 1))))
