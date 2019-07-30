@@ -98,7 +98,9 @@ def replace_leaf(t, old, new):
     >>> laerad == yggdrasil # Make sure original tree is unmodified
     True
     """
-    "*** YOUR CODE HERE ***"
+    if is_leaf(t) and label(t) == old:
+        return tree(new)
+    return tree(label(t), [replace_leaf(b, old, new) for b in branches(t)])
 
 # Mobiles
 
@@ -144,12 +146,12 @@ def end(s):
 def weight(size):
     """Construct a weight of some size."""
     assert size > 0
-    "*** YOUR CODE HERE ***"
+    return ['weight', size]
 
 def size(w):
     """Select the size of a weight."""
     assert is_weight(w), 'must call size on a weight'
-    "*** YOUR CODE HERE ***"
+    return w[1]
 
 def is_weight(w):
     """Whether w is a weight."""
@@ -197,7 +199,23 @@ def balanced(m):
     >>> balanced(mobile(side(1, w), side(1, v)))
     False
     """
-    "*** YOUR CODE HERE ***"
+    if is_weight(m):
+        return True
+    l, r = left(m), right(m)
+    if length(l) * total_weight(end(l)) != length(r) * total_weight(end(r)):
+        return False
+    return balanced(end(l)) and balanced(end(r))
+    # l, r = left(m), right(m)
+    # if length(l) * total_weight(end(l)) != length(r) * total_weight(end(r)):
+    #     return False
+    # elif is_weight(end(l)) and is_weight(end(r)):
+    #    return True
+    # elif is_mobile(end(l)) and is_weight(end(r)):
+    #     return balanced(end(l))
+    # elif is_weight(end(l)) and is_mobile(end(r)):
+    #     return balanced(end(r))
+    # else:
+    #     return balanced(end(r)) and balanced(end(l))
 
 def totals_tree(m):
     """Return a tree representing the mobile with its total weight at the root.
@@ -224,7 +242,20 @@ def totals_tree(m):
           3
           2
     """
-    "*** YOUR CODE HERE ***"
+    # 这两题很有意思，对比一下两种解法，第一种不仅简单很多，也更容易理解
+    if is_weight(m):
+        return tree(total_weight(m))
+    l, r = end(left(m)), end(right(m))
+    return tree(total_weight(m), [totals_tree(l), totals_tree(r)])
+    # l, r = end(left(m)), end(right(m))
+    # if is_weight(l) and is_weight(r):
+    #     return tree(total_weight(m), [tree(size(l)), tree(size(r))])
+    # elif is_weight(l) and is_mobile(r):
+    #     return tree(total_weight(m), [tree(size(l)), totals_tree(r)])
+    # elif is_mobile(l) and is_weight(r):
+    #     return tree(total_weight(m), [totals_tree(l), tree(size(r))])
+    # else:
+    #     return tree(total_weight(m), [totals_tree(l), totals_tree(r)])
 
 # Mutable functions in Python
 
@@ -248,7 +279,14 @@ def make_counter():
     >>> c('b') + c2('b')
     5
     """
-    "*** YOUR CODE HERE ***"
+    string_dict = {}
+    def counter(string):
+        if string in string_dict:
+            string_dict[string] += 1
+        else:
+            string_dict[string] = 1
+        return string_dict[string]
+    return counter
 
 def make_fib():
     """Returns a function that returns the next Fibonacci number
@@ -269,7 +307,13 @@ def make_fib():
     >>> fib() + sum([fib2() for _ in range(5)])
     12
     """
-    "*** YOUR CODE HERE ***"
+    last_fib = 1
+    current_fib = 0
+    def fib():
+        nonlocal last_fib, current_fib
+        last_fib, current_fib = current_fib, current_fib + last_fib 
+        return last_fib
+    return fib
 
 def make_withdraw(balance, password):
     """Return a password-protected withdraw function.
@@ -299,7 +343,21 @@ def make_withdraw(balance, password):
     >>> type(w(10, 'l33t')) == str
     True
     """
-    "*** YOUR CODE HERE ***"
+    attmpts = []
+    def withdraw(amount, confirm):
+        nonlocal balance
+        if len(attmpts) >= 3:
+            return f"Your account is locked. Attempts: {attmpts}"
+        elif confirm != password:
+            attmpts.append(confirm)
+            return 'Incorrect password'
+        else:
+            if balance < amount:
+                return 'Insufficient funds'
+            else:
+                balance -= amount
+                return balance
+    return withdraw
 
 def make_joint(withdraw, old_password, new_password):
     """Return a password-protected withdraw function that has joint access to
@@ -339,7 +397,14 @@ def make_joint(withdraw, old_password, new_password):
     >>> make_joint(w, 'hax0r', 'hello')
     "Your account is locked. Attempts: ['my', 'secret', 'password']"
     """
-    "*** YOUR CODE HERE ***"
+    def joint_withdraw(amount, confirm):
+        if confirm == new_password:
+            return withdraw(amount, old_password)
+        return withdraw(amount, confirm)
+    value = withdraw(0, old_password)
+    if type(value) == str:
+        return value
+    return joint_withdraw
 
 # Generators
 
