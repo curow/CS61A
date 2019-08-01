@@ -442,7 +442,14 @@ def generate_paths(t, x):
     >>> sorted(list(path_to_2))
     [[0, 2], [0, 2, 1, 2]]
     """
-    "*** YOUR CODE HERE ***"
+    stack = []
+    stack.append((t, []))
+    while stack:
+        t, history = stack.pop()
+        if label(t) == x:
+            yield history + [x]
+        for b in branches(t):
+            stack.append((b, history + [label(t)]))
 
 ###################
 # Extra Questions #
