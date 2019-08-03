@@ -146,3 +146,43 @@ def generate_paths(t, x):
             yield history + [x]
         for b in branches(t):
             stack.append((b, history + [label(t)]))
+
+def generate_paths_rec(t, x):
+    """Yields all possible paths from the root of t to a node with the label x
+    as a list.
+
+    >>> t1 = tree(1, [tree(2, [tree(3), tree(4, [tree(6)]), tree(5)]), tree(5)])
+    >>> print_tree(t1)
+    1
+      2
+        3
+        4
+          6
+        5
+      5
+    >>> next(generate_paths_rec(t1, 6))
+    [1, 2, 4, 6]
+    >>> path_to_5 = generate_paths_rec(t1, 5)
+    >>> sorted(list(path_to_5))
+    [[1, 2, 5], [1, 5]]
+
+    >>> t2 = tree(0, [tree(2, [t1])])
+    >>> print_tree(t2)
+    0
+      2
+        1
+          2
+            3
+            4
+              6
+            5
+          5
+    >>> path_to_2 = generate_paths_rec(t2, 2)
+    >>> sorted(list(path_to_2))
+    [[0, 2], [0, 2, 1, 2]]
+    """
+    history = [label(t)]
+    if label(t) == x:
+        yield history
+    for b in branches(t):
+        yield from map(lambda x: history + x, generate_paths_rec(b, x))
