@@ -1,4 +1,4 @@
-#########
+
 # Trees #
 #########
 
@@ -181,8 +181,7 @@ def generate_paths_rec(t, x):
     >>> sorted(list(path_to_2))
     [[0, 2], [0, 2, 1, 2]]
     """
-    history = [label(t)]
     if label(t) == x:
-        yield history
+        yield [x]
     for b in branches(t):
-        yield from map(lambda x: history + x, generate_paths_rec(b, x))
+        yield from map(lambda x: [label(t)] + x, generate_paths_rec(b, x))
