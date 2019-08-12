@@ -32,3 +32,4 @@ Temporary Items
 # CS61A autograde cache file
 .ok_history
 .ok_storage
+.ok_messages
