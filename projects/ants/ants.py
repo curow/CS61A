@@ -357,6 +357,16 @@ class NinjaAnt(Ant):
 
 # BEGIN Problem 8
 # The WallAnt class
+class WallAnt(Ant):
+    """ WallAnt has high armor """
+
+    name = 'Wall'
+    food_cost = 4
+    implemented = True
+
+    def __init__(self, armor=4):
+        """Create an WallAnt with an ARMOR quantity."""
+        Ant.__init__(self, armor)
 # END Problem 8
 
 
