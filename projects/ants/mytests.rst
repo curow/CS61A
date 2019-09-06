@@ -35,3 +35,40 @@ Suite ants
         >>> bee.action(colony)
         >>> bee.place is p0                   # Did ThrowerAnt block the Bee from moving?
         True
+
+Suite QueenAnt
+    >>> import ants
+    >>> hive = ants.Hive(ants.AssaultPlan())
+    >>> dimensions = (2, 9)
+    >>> colony = ants.AntColony(None, hive, ants.ant_types(),
+    ...         ants.dry_layout, dimensions)
+    >>> ants.bees_win = lambda: None
+
+    Case Buff
+        >>> # QueenAnt Placement
+        >>> queen = ants.QueenAnt()
+        >>> impostor = ants.QueenAnt()
+        >>> front_ant, back_ant = ants.ThrowerAnt(), ants.ThrowerAnt()
+        >>> tunnel = [colony.places['tunnel_0_{0}'.format(i)]
+        ...         for i in range(9)]
+        >>> tunnel[1].add_insect(back_ant)
+        >>> tunnel[7].add_insect(front_ant)
+        >>> tunnel[4].add_insect(impostor)
+        >>> impostor.action(colony)
+        >>> impostor.armor            # Impostors must die!
+        0
+        >>> tunnel[4].ant is None
+        True
+        >>> back_ant.damage           # Ants should not be buffed
+        1
+        >>> front_ant.damage
+        1
+        >>> tunnel[4].add_insect(queen)
+        >>> queen.action(colony)
+        >>> queen.armor               # Long live the Queen!
+        1
+        >>> front_ant.damage
+        1
+        >>> back_ant.damage           # Ants behind queen should be buffed
+        2
+
