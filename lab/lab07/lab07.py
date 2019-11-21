@@ -10,7 +10,17 @@ def link_to_list(link):
     >>> link_to_list(Link.empty)
     []
     """
-    "*** YOUR CODE HERE ***"
+    # recursive approach
+    if link is Link.empty:
+        return []
+    return [link.first] + link_to_list(link.rest)
+
+    # iterative approach
+    # li = []
+    # while not link is Link.empty:
+    #     li.append(link.first)
+    #     link = link.rest
+    # return li
 
 # Q5
 def store_digits(n):
@@ -24,7 +34,12 @@ def store_digits(n):
     >>> store_digits(876)
     Link(8, Link(7, Link(6)))
     """
-    "*** YOUR CODE HERE ***"
+    link = Link.empty
+    while n:
+        n, last = n // 10, n % 10
+        link = Link(last, link)
+    return link
+
 
 # Q6
 def cumulative_sum(t):
@@ -36,7 +51,12 @@ def cumulative_sum(t):
     >>> t
     Tree(16, [Tree(8, [Tree(5)]), Tree(7)])
     """
-    "*** YOUR CODE HERE ***"
+    if not t.is_leaf():
+        label = t.label
+        for branch in t.branches:
+            cumulative_sum(branch)
+            label += branch.label
+        t.label = label
 
 # Q7
 def is_bst(t):
