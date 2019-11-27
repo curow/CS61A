@@ -17,7 +17,10 @@ def remove_all(link , value):
     >>> print(l1)
     <0 1>
     """
-    "*** YOUR CODE HERE ***"
+    if not link.rest is Link.empty:
+        remove_all(link.rest, value)
+        if link.second is value:
+            link.rest = link.rest.rest
 
 # Q10
 def deep_map_mut(fn, link):
@@ -32,7 +35,12 @@ def deep_map_mut(fn, link):
     >>> print(link1)
     <9 <16> 25 36>
     """
-    "*** YOUR CODE HERE ***"
+    if isinstance(link.first, Link):
+        deep_map_mut(fn, link.first)
+    else:
+        link.first = fn(link.first)
+    if not link.rest is Link.empty:
+        deep_map_mut(fn, link.rest)
 
 # Q11
 def has_cycle(link):
@@ -49,7 +57,13 @@ def has_cycle(link):
     >>> has_cycle(u)
     False
     """
-    "*** YOUR CODE HERE ***"
+    link_set = {link}
+    while not link.rest is Link.empty:
+        if link.rest in link_set:
+            return True
+        link = link.rest
+        link_set.add(link)
+    return False
 
 def has_cycle_constant(link):
     """Return whether link contains a cycle.
@@ -78,4 +92,21 @@ def reverse_other(t):
     >>> t
     Tree(1, [Tree(8, [Tree(3, [Tree(5), Tree(4)]), Tree(6, [Tree(7)])]), Tree(2)])
     """
-    "*** YOUR CODE HERE ***"
+    def reverse_branches(tree):
+        branches = tree.branches
+        for i in range(len(branches) // 2):
+            branches[i].label, branches[-1-i].label = branches[-1-i].label, branches[i].label
+
+    level = 0
+    current_layer = [t]
+    while current_layer:
+        if level % 2 == 0:
+            for tree in current_layer:
+                reverse_branches(tree)
+        next_layer = []
+        for tree in current_layer:
+            next_layer.extend(tree.branches)
+        current_layer = next_layer
+        level += 1
+    
+            
