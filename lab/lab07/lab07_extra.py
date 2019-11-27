@@ -76,7 +76,26 @@ def has_cycle_constant(link):
     >>> has_cycle_constant(t)
     False
     """
-    "*** YOUR CODE HERE ***"
+    # slow_pointer = link
+    # fast_pointer = link
+    # step = 0
+    # while not fast_pointer.rest is Link.empty:
+    #     fast_pointer = fast_pointer.rest
+    #     if slow_pointer is fast_pointer:
+    #         return True
+    #     if step % 2 == 1:
+    #         slow_pointer = slow_pointer.rest
+    #     step += 1
+    # return False
+    slow_pointer = link
+    fast_pointer = link
+    while slow_pointer and fast_pointer and fast_pointer.rest:
+        slow_pointer = slow_pointer.rest
+        fast_pointer = fast_pointer.rest.rest
+        if slow_pointer is fast_pointer:
+            return True
+    return False
+
 
 # Q12
 def reverse_other(t):
