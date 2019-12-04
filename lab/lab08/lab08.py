@@ -68,7 +68,14 @@ def deep_len(lnk):
     >>> deep_len(levels)
     5
     """
-    "*** YOUR CODE HERE ***"
+    total = 0
+    if not isinstance(lnk.first, Link):
+        total += 1
+    else:
+        total += deep_len(lnk.first)
+    if not lnk.rest is Link.empty:
+        total += deep_len(lnk.rest)
+    return total
 
 # Recursion/Tree Recursion
 
@@ -81,7 +88,10 @@ def insert_into_all(item, nested_list):
     >>> insert_into_all(0, nl)
     [[0], [0, 1, 2], [0, 3]]
     """
-    "*** YOUR CODE HERE ***"
+    result = []
+    for lst in nested_list:
+        result.append([item] + lst)
+    return result
 
 def subseqs(s):
     """Assuming that S is a list, return a nested list of all subsequences
@@ -93,7 +103,14 @@ def subseqs(s):
     >>> subseqs([])
     [[]]
     """
-    "*** YOUR CODE HERE ***"
+    nested_list = []
+    if s:
+        sub_list = subseqs(s[1:])
+        nested_list.extend(sub_list)
+        nested_list.extend(insert_into_all(s[0], sub_list))
+    else:
+        nested_list.append([])
+    return nested_list
 
 def inc_subseqs(s):
     """Assuming that S is a list, return a nested list of all subsequences
@@ -111,11 +128,11 @@ def inc_subseqs(s):
     """
     def subseq_helper(s, prev):
         if not s:
-            return ____________________
+            return [[]]
         elif s[0] < prev:
-            return ____________________
+            return subseq_helper(s[1:], prev)
         else:
-            a = ______________________
-            b = ______________________
-            return insert_into_all(________, ______________) + ________________
-    return subseq_helper(____, ____)
+            a = subseq_helper(s[1:], prev)
+            b = subseq_helper(s[1:], s[0])
+            return a + insert_into_all(s[0], b)
+    return subseq_helper(s, 0)
