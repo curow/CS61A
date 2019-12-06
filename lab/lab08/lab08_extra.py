@@ -27,17 +27,26 @@ class Keyboard:
     """
 
     def __init__(self, *args):
-        "*** YOUR CODE HERE ***"
+        self.buttons = {}
+        for arg in args:
+            assert isinstance(arg, Button), 'Give Button instances as inputs'
+            self.buttons[arg.pos] = arg
 
     def press(self, info):
         """Takes in a position of the button pressed, and
         returns that button's output"""
-        "*** YOUR CODE HERE ***"
+        if info in self.buttons:
+            self.buttons[info].times_pressed += 1
+            return self.buttons[info].key
+        return ''
 
     def typing(self, typing_input):
         """Takes in a list of positions of buttons pressed, and
         returns the total output"""
-        "*** YOUR CODE HERE ***"
+        res = ""
+        for pos in typing_input:
+            res += self.press(pos)
+        return res
 
 class Button:
     def __init__(self, pos, key):
@@ -75,7 +84,25 @@ def make_advanced_counter_maker():
     >>> tom_counter('global-count')
     1
     """
-    "*** YOUR CODE HERE ***"
+    global_count = 0
+    def make_counter():
+        local_count = 0
+        def counter(command):
+            nonlocal global_count, local_count
+            if command  == 'global-count':
+                global_count += 1
+                return global_count
+            elif command  == 'global-reset':
+                global_count = 0
+            elif command == 'count':
+                local_count += 1
+                return local_count
+            elif command == 'reset':
+                local_count = 0
+            else:
+                print('no command named {}'.format(command))
+        return counter
+    return make_counter
 
 # Lists
 def trade(first, second):
