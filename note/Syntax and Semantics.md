@@ -1,0 +1,7 @@
+Syntax：语法
+
+Semantics：语义
+
+Syntax说明了一个编程语言中哪些组合是有效的，Semantics则指明这些有效的组合具体的意义是什么。
+
+另一方面，编程语言中需要确保每个semantic element都有至少一个或者多个syntactic expression表示，也需要确保每个syntactic expression都仅有一个semantic meaning。
