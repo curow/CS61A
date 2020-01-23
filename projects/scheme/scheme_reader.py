@@ -153,7 +153,14 @@ def read_tail(src):
             # END PROBLEM 1
         elif src.current() == '.':
             # BEGIN PROBLEM 2
-            "*** YOUR CODE HERE ***"
+            src.remove_front()
+            value = scheme_read(src)
+            if src.current() == ')':
+                src.remove_front()
+                return value
+            else:
+                raise SyntaxError(
+                    'unexpected expression after {}'.format(value))
             # END PROBLEM 2
         else:
             # BEGIN PROBLEM 1
