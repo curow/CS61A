@@ -7,7 +7,6 @@ import numbers
 import operator
 import sys
 from scheme_reader import Pair, nil, repl_str
-import scheme
 
 try:
     import turtle
@@ -61,7 +60,7 @@ def scheme_not(x):
 @builtin("equal?")
 def scheme_equalp(x, y):
     if scheme_pairp(x) and scheme_pairp(y):
-        return scheme_equalp(x.first, y.first) and scheme_equalp(x.rest, y.rest)
+        return scheme_equalp(x.first, y.first) and scheme_equalp(x.second, y.second)
     elif scheme_numberp(x) and scheme_numberp(y):
         return x == y
     else:
@@ -78,11 +77,7 @@ def scheme_eqp(x, y):
 
 @builtin("pair?")
 def scheme_pairp(x):
-    return type(x).__name__ == 'Pair'
-
-@builtin("scheme-valid-cdr?")
-def scheme_valid_cdrp(x):
-    return scheme_pairp(x) or scheme_nullp(x) or scheme_promisep(x)
+    return isinstance(x, Pair)
 
 # Streams
 @builtin("promise?")
@@ -96,12 +91,12 @@ def scheme_force(x):
 
 @builtin("cdr-stream")
 def scheme_cdr_stream(x):
-    check_type(x, lambda x: scheme_pairp(x) and scheme_promisep(x.rest), 0, 'cdr-stream')
-    return scheme_force(x.rest)
+    check_type(x, lambda x: scheme_pairp(x) and scheme_promisep(x.second), 0, 'cdr-stream')
+    return scheme_force(x.second)
 
 @builtin("null?")
 def scheme_nullp(x):
-    return type(x).__name__ == 'nil'
+    return x is nil
 
 @builtin("list?")
 def scheme_listp(x):
@@ -109,7 +104,7 @@ def scheme_listp(x):
     while x is not nil:
         if not isinstance(x, Pair):
             return False
-        x = x.rest
+        x = x.second
     return True
 
 @builtin("length")
@@ -131,19 +126,18 @@ def scheme_car(x):
 @builtin("cdr")
 def scheme_cdr(x):
     check_type(x, scheme_pairp, 0, 'cdr')
-    return x.rest
+    return x.second
 
 # Mutation extras
 @builtin("set-car!")
-def scheme_set_car(x, y):
+def scheme_car(x, y):
     check_type(x, scheme_pairp, 0, 'set-car!')
     x.first = y
 
 @builtin("set-cdr!")
-def scheme_set_cdr(x, y):
+def scheme_cdr(x, y):
     check_type(x, scheme_pairp, 0, 'set-cdr!')
-    check_type(y, scheme_valid_cdrp, 1, 'set-cdr!')
-    x.rest = y
+    x.second = y
 
 @builtin("list")
 def scheme_list(*vals):
@@ -162,11 +156,11 @@ def scheme_append(*vals):
         if v is not nil:
             check_type(v, scheme_pairp, i, 'append')
             r = p = Pair(v.first, result)
-            v = v.rest
+            v = v.second
             while scheme_pairp(v):
-                p.rest = Pair(v.first, result)
-                p = p.rest
-                v = v.rest
+                p.second = Pair(v.first, result)
+                p = p.second
+                v = v.second
             result = r
     return result
 
@@ -177,7 +171,6 @@ def scheme_stringp(x):
 @builtin("symbol?")
 def scheme_symbolp(x):
     return isinstance(x, str) and not scheme_stringp(x)
-
 
 @builtin("number?")
 def scheme_numberp(x):
@@ -201,13 +194,9 @@ def _arith(fn, init, vals):
     s = init
     for val in vals:
         s = fn(s, val)
-    s = _ensure_int(s)
+    if int(s) == s:
+        s = int(s)
     return s
-
-def _ensure_int(x):
-    if int(x) == x:
-        x = int(x)
-    return x
 
 @builtin("+")
 def scheme_add(*vals):
@@ -217,7 +206,7 @@ def scheme_add(*vals):
 def scheme_sub(val0, *vals):
     _check_nums(val0, *vals) # fixes off-by-one error
     if len(vals) == 0:
-        return _ensure_int(-val0)
+        return -val0
     return _arith(operator.sub, val0, vals)
 
 @builtin("*")
@@ -229,7 +218,7 @@ def scheme_div(val0, *vals):
     _check_nums(val0, *vals) # fixes off-by-one error
     try:
         if len(vals) == 0:
-            return _ensure_int(operator.truediv(1, val0))
+            return operator.truediv(1, val0)
         return _arith(operator.truediv, val0, vals)
     except ZeroDivisionError as err:
         raise SchemeError(err)

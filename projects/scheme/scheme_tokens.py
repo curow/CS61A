@@ -108,12 +108,9 @@ def tokenize_line(line):
         elif text[0] in _STRING_DELIMS:
             result.append(text)
         else:
-            error_message = [
-                "warning: invalid token: {0}".format(text),
-                " " * 4       + line,
-                " " * (i + 4) + "^"
-            ]
-            raise ValueError("\n".join(error_message))
+            print("warning: invalid token: {0}".format(text), file=sys.stderr)
+            print("    ", line, file=sys.stderr)
+            print(" " * (i+3), "^", file=sys.stderr)
         text, i = next_candidate_token(line, i)
     return result
 

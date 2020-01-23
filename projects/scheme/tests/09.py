@@ -6,56 +6,27 @@ test = {
       'cases': [
         {
           'code': r"""
-          scm> (define (f x y) (+ x y))
-          715124391110b4a3beec8c9ba1ec3097
-          # locked
-          scm> f
+          scm> (lambda (x y) (+ x y))
           1456de84c3edf333b6f7aee0c0624b20
           # locked
-          # choice: (lambda (x y) (+ x y))
-          # choice: (lambda (f x y) (+ x y))
-          # choice: (f (x y) (+ x y))
-          # choice: (define f (lambda (x y) (+ x y)))
           """,
           'hidden': False,
           'locked': True
         },
         {
           'code': r"""
-          scm> (define (f) (+ 2 2))
-          f
-          scm> f
-          (lambda () (+ 2 2))
+          scm> (lambda (x) (+ x) (+ x x))
+          (lambda (x) (+ x) (+ x x))
+          scm> (lambda (x))
+          SchemeError
           """,
           'hidden': False,
           'locked': False
         },
         {
           'code': r"""
-          scm> (define (f x) (* x x))
-          f
-          scm> f
-          (lambda (x) (* x x))
-          """,
-          'hidden': False,
-          'locked': False
-        },
-        {
-          'code': r"""
-          scm> (define (foo x) 1 2 3 4 5)
-          foo
-          scm> foo
-          (lambda (x) 1 2 3 4 5)
-          """,
-          'hidden': False,
-          'locked': False
-        },
-        {
-          'code': r"""
-          scm> (define (foo) (/ 1 0))
-          foo
-          scm> foo
-          (lambda () (/ 1 0))
+          scm> (lambda () 2)
+          (lambda () 2)
           """,
           'hidden': False,
           'locked': False
@@ -70,13 +41,14 @@ test = {
       'cases': [
         {
           'code': r"""
-          >>> inp = read_line("(define (f x) x)")
-          >>> scheme_eval(inp, env)
-          'f'
-          >>> scheme_eval('f', env)
-          LambdaProcedure(Pair('x', nil), Pair('x', nil), <Global Frame>)
-          >>> inp == read_line("(define (f x) x)") # Don't mutate the input expression!
+          >>> lambda_line = read_line("(lambda (x y) x)")
+          >>> lambda_proc = do_lambda_form(lambda_line.second, env)
+          >>> isinstance(lambda_proc, LambdaProcedure)
           True
+          >>> lambda_proc.env is env
+          True
+          >>> lambda_proc
+          LambdaProcedure(Pair('x', Pair('y', nil)), Pair('x', nil), <Global Frame>)
           """,
           'hidden': False,
           'locked': False

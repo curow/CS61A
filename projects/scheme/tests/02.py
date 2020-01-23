@@ -6,96 +6,111 @@ test = {
       'cases': [
         {
           'code': r"""
-          >>> global_frame = create_global_frame()
-          >>> global_frame.define("x", 3)
-          >>> global_frame.parent is None
-          b1796eff8a8e977439f97b5c6881a282
+          >>> read_line("(a . b)")
+          0b0cc1b8cf08e385941c8c36b5c52b62
           # locked
-          >>> global_frame.lookup("x")
-          3c7e8a3a2176a696c3a66418f78dff6b
-          # locked
-          >>> global_frame.define("x", 2)
-          >>> global_frame.lookup("x")
-          2b7cdec3904f986982cbd24a0bc12887
-          # locked
-          >>> global_frame.lookup("foo")
-          ec908af60f03727428c7ee3f22ec3cd8
-          # locked
-          # choice: None
-          # choice: SchemeError
-          # choice: 3
+          # choice: Pair('a', Pair('b'))
+          # choice: Pair('a', Pair('b', nil))
+          # choice: SyntaxError
+          # choice: Pair('a', 'b')
+          # choice: Pair('a', 'b', nil)
           """,
           'hidden': False,
           'locked': True
         },
         {
           'code': r"""
-          >>> first_frame = create_global_frame()
-          >>> first_frame.define("x", 3)
-          >>> first_frame.define("y", False)
-          >>> second_frame = Frame(first_frame)
-          >>> second_frame.parent == first_frame
-          b1796eff8a8e977439f97b5c6881a282
+          >>> read_line("(a b . c)")
+          e0650e8b7a6620bc7853084430e25494
           # locked
-          >>> second_frame.lookup("x")
-          3c7e8a3a2176a696c3a66418f78dff6b
-          # locked
-          >>> second_frame.lookup("y")
-          96ae38315990d5fb27de4225d8b470ba
-          # locked
+          # choice: Pair('a', Pair('b', Pair('c', nil)))
+          # choice: Pair('a', Pair('b', Pair('c')))
+          # choice: Pair('a', 'b', 'c')
+          # choice: Pair('a', Pair('b', 'c'))
+          # choice: SyntaxError
           """,
           'hidden': False,
           'locked': True
         },
         {
           'code': r"""
-          >>> first_frame = create_global_frame()
-          >>> first_frame.define("x", 3)
-          >>> second_frame = Frame(first_frame)
-          >>> third_frame = Frame(second_frame)
-          >>> fourth_frame = Frame(third_frame)
-          >>> fourth_frame.lookup("x")
-          3
-          >>> second_frame.define("y", 1)
-          >>> fourth_frame.lookup("y")
-          1
-          >>> first_frame.define("y", 0)
-          >>> fourth_frame.lookup("y")
-          1
-          >>> fourth_frame.define("y", 2)
-          >>> fourth_frame.lookup("y")
-          2
+          >>> read_line("(a b . c d)")
+          8c2bf83bd06967ba8dd8731d41d13081
+          # locked
+          # choice: Pair('a', Pair('b', Pair('c', 'd')))
+          # choice: Pair('a', Pair('b', 'c'))
+          # choice: Pair('a', Pair('b', Pair('c', Pair('d', nil))))
+          # choice: SyntaxError
+          """,
+          'hidden': False,
+          'locked': True
+        },
+        {
+          'code': r"""
+          >>> read_line("(a . (b . (c . ())))")
+          d106bb7be6b014a9d16d74410be4a8a5
+          # locked
+          # choice: Pair('a', Pair('b', Pair('c', nil)))
+          # choice: SyntaxError
+          # choice: Pair('a', Pair('b', Pair('c', Pair(nil, nil))))
+          # choice: Pair('a', 'b', 'c')
+          """,
+          'hidden': False,
+          'locked': True
+        },
+        {
+          'code': r"""
+          >>> read_line("(a . ((b . (c))))")
+          963c3554f1b17d86bc590ef60f144da2
+          # locked
+          # choice: Pair('a', Pair(Pair('b', Pair('c', nil)), nil))
+          # choice: Pair('a', Pair('b', Pair('c', nil)), nil)
+          # choice: Pair('a', Pair('b', Pair('c')), nil)
+          # choice: Pair('a', Pair(Pair('b', Pair('c', nil)), nil), nil)
+          """,
+          'hidden': False,
+          'locked': True
+        },
+        {
+          'code': r"""
+          >>> src = Buffer(tokenize_lines(["(1 . 2)"]))
+          >>> scheme_read(src)
+          Pair(1, 2)
+          >>> src.current() # Don't forget to remove the closing parenthesis!
           """,
           'hidden': False,
           'locked': False
         },
         {
           'code': r"""
-          >>> first_frame = create_global_frame()
-          >>> first_frame.define("x", 1)
-          >>> second_frame = Frame(first_frame)
-          >>> third_frame = Frame(second_frame)
-          >>> fourth_frame = Frame(first_frame)
-          >>> fifth_frame = Frame(fourth_frame)
-          >>> fifth_frame.lookup("x")
+          >>> read_line('(1 2 . 3)')
+          Pair(1, Pair(2, 3))
+          >>> read_line('(1 . 2 3)')
+          SyntaxError
+          >>> scheme_read(Buffer(tokenize_lines(['(1', '2 .', "(quote (3 4)))", '4'])))
+          Pair(1, Pair(2, Pair('quote', Pair(Pair(3, Pair(4, nil)), nil))))
+          >>> read_line("(2 . 3 4 . 5)")
+          SyntaxError
+          >>> read_line("(2 (3 . 4) 5)")
+          Pair(2, Pair(Pair(3, 4), Pair(5, nil)))
+          >>> read_line("(1 2")
+          SyntaxError
+          """,
+          'hidden': False,
+          'locked': False
+        },
+        {
+          'code': r"""
+          >>> read_tail(Buffer(tokenize_lines(['. 1)'])))
           1
-          >>> third_frame.lookup("x")
-          1
-          >>> second_frame.define("x", 2)
-          >>> third_frame.lookup("x")
-          2
-          >>> fifth_frame.lookup("x")
-          1
-          >>> fifth_frame.define("x", 5)
-          >>> fifth_frame.lookup("x")
-          5
-          >>> fourth_frame.lookup("x")
-          1
-          >>> first_frame.define("x", 4)
-          >>> fourth_frame.lookup("x")
-          4
-          >>> third_frame.lookup("x")
-          2
+          >>> read_tail(Buffer(tokenize_lines(['. 1'])))
+          SyntaxError
+          >>> read_tail(Buffer(tokenize_lines(['. (1 2 3))'])))
+          Pair(1, Pair(2, Pair(3, nil)))
+          >>> read_line("(1 . (quote (2 . (quote (3 4)))))")
+          Pair(1, Pair('quote', Pair(Pair(2, Pair('quote', Pair(Pair(3, Pair(4, nil)), nil))), nil)))
+          >>> read_line("(1 . (quote (2 (3 4))) 6)")
+          SyntaxError
           """,
           'hidden': False,
           'locked': False
@@ -103,30 +118,10 @@ test = {
       ],
       'scored': True,
       'setup': r"""
-      >>> from scheme import *
+      >>> from scheme_reader import *
       """,
       'teardown': '',
       'type': 'doctest'
-    },
-    {
-      'cases': [
-        {
-          'code': r"""
-          scm> +
-          #[+]
-          scm> display
-          #[display]
-          scm> hello
-          SchemeError
-          """,
-          'hidden': False,
-          'locked': False
-        }
-      ],
-      'scored': True,
-      'setup': '',
-      'teardown': '',
-      'type': 'scheme'
     }
   ]
 }

@@ -1,23 +1,25 @@
 test = {
   'name': 'Problem 17',
-  'points': 2,
+  'points': 1,
   'suites': [
     {
       'cases': [
         {
           'code': r"""
-          scm> (list-change 10 '(25 10 5 1))
-          ((10) (5 5) (5 1 1 1 1 1) (1 1 1 1 1 1 1 1 1 1))
-          scm> (list-change 5 '(4 3 2 1))
-          ((4 1) (3 2) (3 1 1) (2 2 1) (2 1 1 1) (1 1 1 1 1))
+          scm> (enumerate '(3 4 5 6))
+          ((0 3) (1 4) (2 5) (3 6))
+          scm> (enumerate '(9 8 7 6 5 4))
+          ((0 9) (1 8) (2 7) (3 6) (4 5) (5 4))
           """,
           'hidden': False,
           'locked': False
         },
         {
           'code': r"""
-          scm> (list-change 7 '(5 4 3 2 1))
-          ((5 2) (5 1 1) (4 3) (4 2 1) (4 1 1 1) (3 3 1) (3 2 2) (3 2 1 1) (3 1 1 1 1) (2 2 2 1) (2 2 1 1 1) (2 1 1 1 1 1) (1 1 1 1 1 1 1))
+          scm> (enumerate '(a b c d))
+          ((0 a) (1 b) (2 c) (3 d))
+          scm> (enumerate '())
+          ()
           """,
           'hidden': False,
           'locked': False

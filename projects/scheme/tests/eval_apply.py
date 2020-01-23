@@ -5,16 +5,16 @@ test = {
     {
       'cases': [
         {
-          'answer': '894f36490989bdbb7f0e397e9c74a9da',
+          'answer': 'f0f61d61071445ee3234a1688a49f72c',
           'choices': [
-            'Call expressions and special forms',
-            'Only call expressions',
-            'Only special forms',
-            'All expressions are represented as Pairs'
+            'A primitive expression or a combination',
+            'A pair or a list',
+            'A special form or a call expression',
+            'A primitive expression or a special form'
           ],
           'hidden': False,
           'locked': True,
-          'question': 'What types of expressions are represented as Pairs?'
+          'question': 'A Scheme expression can be either...'
         },
         {
           'answer': 'f9007bdc473e42efc27b7ee858aff42e',

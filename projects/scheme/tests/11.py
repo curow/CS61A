@@ -6,57 +6,20 @@ test = {
       'cases': [
         {
           'code': r"""
-          scm> (define (square x) (* x x))
-          square
-          scm> square
-          (lambda (x) (* x x))
-          scm> (square 21)
-          441
-          scm> square ; check to make sure lambda body hasn't changed
-          (lambda (x) (* x x))
-          scm> (define square (lambda (x) (* x x)))
-          square
-          scm> (square (square 21))
-          194481
-          """,
-          'hidden': False,
-          'locked': False
-        },
-        {
-          'code': r"""
-          scm> ((lambda (x) (list x (list (quote quote) x))) (quote (lambda (x) (list x (list (quote quote) x)))))
-          ((lambda (x) (list x (list (quote quote) x))) (quote (lambda (x) (list x (list (quote quote) x)))))
-          """,
-          'hidden': False,
-          'locked': False
-        }
-      ],
-      'scored': True,
-      'setup': '',
-      'teardown': '',
-      'type': 'scheme'
-    },
-    {
-      'cases': [
-        {
-          'code': r"""
-          scm> (define (outer x y)
-          ....   (define (inner z x)
-          ....     (+ x (* y 2) (* z 3)))
-          ....   (inner x 10))
-          71fe94b728b1cb1923a1c51c2533bcd8
+          >>> formals = Pair('a', Pair('b', Pair('c', nil)))
+          >>> vals = Pair(1, Pair(2, Pair(3, nil)))
+          >>> frame = global_frame.make_child_frame(formals, vals)
+          >>> global_frame.lookup('a') # Type SchemeError if you think this errors
+          ec908af60f03727428c7ee3f22ec3cd8
           # locked
-          scm> (outer 1 2)
-          5d3ec98dabcf5b4a06694ccc93722cfb
+          >>> frame.lookup('a')        # Type SchemeError if you think this errors
+          eb892a26497f936d1f6cae54aacc5f51
           # locked
-          scm> (define (outer-func x y)
-          ....   (define (inner z x)
-          ....     (+ x (* y 2) (* z 3)))
-          ....   inner)
-          0b6323ff730faa1f7ac702f64f4cbfcb
+          >>> frame.lookup('b')        # Type SchemeError if you think this errors
+          2b7cdec3904f986982cbd24a0bc12887
           # locked
-          scm> ((outer-func 1 2) 1 10)
-          5d3ec98dabcf5b4a06694ccc93722cfb
+          >>> frame.lookup('c')        # Type SchemeError if you think this errors
+          3c7e8a3a2176a696c3a66418f78dff6b
           # locked
           """,
           'hidden': False,
@@ -64,29 +27,76 @@ test = {
         },
         {
           'code': r"""
-          scm> (define square (lambda (x) (* x x)))
-          square
-          scm> (define (sum-of-squares x y) (+ (square x) (square y)))
-          sum-of-squares
-          scm> (sum-of-squares 3 4)
-          25
-          scm> (define double (lambda (x) (* 2 x)))
-          double
-          scm> (define compose (lambda (f g) (lambda (x) (f (g x)))))
-          compose
-          scm> (define apply-twice (lambda (f) (compose f f)))
-          apply-twice
-          scm> ((apply-twice double) 5)
-          20
+          >>> frame = global_frame.make_child_frame(nil, nil)
+          >>> frame.parent is global_frame
+          b1796eff8a8e977439f97b5c6881a282
+          # locked
+          """,
+          'hidden': False,
+          'locked': True
+        },
+        {
+          'code': r"""
+          >>> first = Frame(global_frame)
+          >>> second = first.make_child_frame(nil, nil)
+          >>> second.parent is first
+          True
           """,
           'hidden': False,
           'locked': False
         }
       ],
       'scored': True,
-      'setup': '',
+      'setup': r"""
+      >>> from scheme import *
+      >>> global_frame = create_global_frame()
+      """,
       'teardown': '',
-      'type': 'scheme'
+      'type': 'doctest'
+    },
+    {
+      'cases': [
+        {
+          'code': r"""
+          >>> # More argument values than formal parameters
+          >>> global_frame.make_child_frame(Pair('a', nil), Pair(1, Pair(2, Pair(3, nil))))
+          SchemeError
+          """,
+          'hidden': False,
+          'locked': False
+        },
+        {
+          'code': r"""
+          >>> # More formal parameters than argument values
+          >>> global_frame.make_child_frame(Pair('a', Pair('b', Pair('c', nil))), Pair(1, nil))
+          SchemeError
+          """,
+          'hidden': False,
+          'locked': False
+        },
+        {
+          'code': r"""
+          >>> # Values can be pairs.
+          >>> frame = global_frame.make_child_frame(Pair('a', Pair('b', nil)), Pair(Pair(1, nil), Pair(Pair(2, nil), nil)))
+          >>> frame.lookup('a')
+          Pair(1, nil)
+          >>> frame.lookup('b')
+          Pair(2, nil)
+          >>> frame2 = frame.make_child_frame(nil, nil) # Bind parents correctly
+          >>> frame2.lookup('a')
+          Pair(1, nil)
+          """,
+          'hidden': False,
+          'locked': False
+        }
+      ],
+      'scored': True,
+      'setup': r"""
+      >>> from scheme import *
+      >>> global_frame = create_global_frame()
+      """,
+      'teardown': '',
+      'type': 'doctest'
     }
   ]
 }

@@ -1,91 +1,51 @@
 test = {
   'name': 'Problem 5',
-  'points': 1,
+  'points': 2,
   'suites': [
     {
       'cases': [
         {
-          'answer': '387d4e723b815b0aba3fb3dfe352cd4d',
-          'choices': [
-            r"""
-            Pair(A, Pair(B, nil)), where:
-                A is the symbol being bound,
-                B is an expression whose value should be bound to A
-            """,
-            r"""
-            Pair(A, Pair(B, nil)), where:
-                A is the symbol being bound,
-                B is the value that should be bound to A
-            """,
-            r"""
-            Pair(A, B), where:
-                A is the symbol being bound,
-                B is the value that should be bound to A
-            """,
-            r"""
-            Pair(A, B), where:
-                A is the symbol being bound,
-                B is an expression whose value should be bound to A
-            """,
-            r"""
-            Pair('define', Pair(A, Pair(B, nil))), where:
-                A is the symbol being bound,
-                B is an expression whose value should be bound to A
-            """
-          ],
+          'code': r"""
+          >>> expr = read_line('(+ 2 2)')
+          >>> scheme_eval(expr, create_global_frame()) # Type SchemeError if you think this errors
+          46beb7deeeb5e9af1c8d785b12558317
+          # locked
+          >>> expr = read_line('(+ (+ 2 2) (+ 1 3) (* 1 4))')
+          >>> scheme_eval(expr, create_global_frame()) # Type SchemeError if you think this errors
+          4c5d1a42692bacbca88ab48bbcf75c52
+          # locked
+          >>> expr = read_line('(yolo)')
+          >>> scheme_eval(expr, create_global_frame()) # Type SchemeError if you think this errors
+          ec908af60f03727428c7ee3f22ec3cd8
+          # locked
+          """,
           'hidden': False,
-          'locked': True,
-          'question': 'What is the structure of the expressions argument to do_define_form?'
-        },
-        {
-          'answer': '0ed53dce7bacc4766422abc478c5c895',
-          'choices': [
-            'make_child_frame',
-            'define',
-            'lookup',
-            'bindings'
-          ],
-          'hidden': False,
-          'locked': True,
-          'question': r"""
-          What method of a Frame instance will bind
-          a value to a symbol in that frame?
-          """
+          'locked': True
         }
       ],
-      'scored': False,
-      'type': 'concept'
+      'scored': True,
+      'setup': r"""
+      >>> from scheme_reader import *
+      >>> from scheme import *
+      """,
+      'teardown': '',
+      'type': 'doctest'
     },
     {
       'cases': [
         {
           'code': r"""
-          scm> (define size 2)
-          cc3c061fb8167d02a4ddda1f1c19966e
-          # locked
-          scm> size
-          2b7cdec3904f986982cbd24a0bc12887
-          # locked
-          """,
-          'hidden': False,
-          'locked': True
-        },
-        {
-          'code': r"""
-          scm> (define x (+ 2 3))
-          38ba916dc1f41eb239567ee41a251ecd
-          # locked
-          scm> x
+          scm> (+ 2 3) ; Type SchemeError if you think this errors
           b33c0f7206201b4aaeae595493888600
           # locked
-          scm> (define x (+ 2 7))
-          38ba916dc1f41eb239567ee41a251ecd
+          scm> (* (+ 3 2) (+ 1 7)) ; Type SchemeError if you think this errors
+          a692eb3d6b9f6889d113635424465221
           # locked
-          scm> x
-          27c11fef0d1b8697654b38bb53c550c8
+          scm> (1 2) ; Type SchemeError if you think this errors
+          ec908af60f03727428c7ee3f22ec3cd8
           # locked
-          scm> (eval (define tau 6.28))
-          aa59dd661f134fa3eab23231a65d789e
+          scm> (1 (print 0)) ; check_procedure should be called before operands are evaluated
+          ec908af60f03727428c7ee3f22ec3cd8
           # locked
           """,
           'hidden': False,
@@ -93,30 +53,49 @@ test = {
         },
         {
           'code': r"""
-          scm> (define pi 3.14159)
-          pi
-          scm> (define radius 10)
-          radius
-          scm> (define area (* pi (* radius radius)))
-          area
-          scm> area
-          314.159
-          scm> (define radius 100)
-          radius
-          scm> radius
-          100
-          scm> area
-          314.159
+          scm> (+)
+          0
+          scm> (odd? 13)
+          #t
+          scm> (car (list 1 2 3 4))
+          1
+          scm> (car car)
+          SchemeError
+          scm> (odd? 1 2 3)
+          SchemeError
           """,
           'hidden': False,
           'locked': False
         },
         {
           'code': r"""
-          scm> (define 0 1)
+          scm> (+ (+ 1) (* 2 3) (+ 5) (+ 6 (+ 7)))
+          25
+          scm> (*)
+          1
+          scm> (-)
           SchemeError
-          scm> (define error (/ 1 0))
+          scm> (car (cdr (cdr (list 1 2 3 4))))
+          3
+          scm> (car cdr (list 1))
           SchemeError
+          scm> (* (car (cdr (cdr (list 1 2 3 4)))) (car (cdr (list 1 2 3 4))))
+          6
+          scm> (* (car (cdr (cdr (list 1 2 3 4)))) (cdr (cdr (list 1 2 3 4))))
+          SchemeError
+          scm> (+ (/ 1 0))
+          SchemeError
+          """,
+          'hidden': False,
+          'locked': False
+        },
+        {
+          'code': r"""
+          scm> ((/ 1 0) (print 5)) ; operator should be evaluated before operands
+          SchemeError
+          scm> (null? (print 5)) ; operands should only be evaluated once
+          5
+          #f
           """,
           'hidden': False,
           'locked': False

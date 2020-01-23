@@ -1,5 +1,5 @@
 test = {
-  'name': 'Problem 9 (EC)',
+  'name': 'Problem 21 (EC)',
   'points': 1,
   'suites': [
     {
@@ -49,10 +49,12 @@ test = {
           SchemeError
           scm> (define-macro (hello world))
           SchemeError
-          scm> (define-macro (5) (list 1 2))
+          scm> (define-macro (5) (cons 1 2))
           SchemeError
           scm> (define-macro (name) (body))
           name
+          scm> name
+          (lambda () (body))
           scm> (name)
           SchemeError
           """,

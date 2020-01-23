@@ -7,8 +7,11 @@
 ;;; after the last test you wish to run.
 
 ;;; ********************************
-;;; *** Add your own tests here! (Optional) ***
+;;; *** Add your own tests here! ***
 ;;; ********************************
+; BEGIN PROBLEM 0
+'replace-this-line
+; END PROBLEM 0
 
 ;;; These are examples from several sections of "The Structure
 ;;; and Interpretation of Computer Programs" by Abelson and Sussman.
@@ -54,6 +57,10 @@
       6))
 ; expect 57
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Move the following (exit) line down the file to run additional tests. ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(exit)
 
 
 ;;; 1.1.2
@@ -238,15 +245,15 @@ circumference
   (= (* (numer x) (denom y))
      (* (numer y) (denom x))))
 
-(define x (cons 1 (cons 2 nil)))
+(define x (cons 1 2))
 (car x)
 ; expect 1
 
 (cdr x)
-; expect (2)
+; expect 2
 
-(define x (list 1 2))
-(define y (list 3 4))
+(define x (cons 1 2))
+(define y (cons 3 4))
 (define z (cons x y))
 (car (car z))
 ; expect 1
@@ -255,11 +262,11 @@ circumference
 ; expect 3
 
 z
-; expect ((1 2) 3 4)
+; expect ((1 . 2) 3 . 4)
 
-(define (make-rat n d) (list n d))
+(define (make-rat n d) (cons n d))
 (define (numer x) (car x))
-(define (denom x) (car (cdr x)))
+(define (denom x) (cdr x))
 (define (print-rat x)
   (display (numer x))
   (display '/)
@@ -285,7 +292,7 @@ z
       (gcd b (remainder a b))))
 (define (make-rat n d)
   (let ((g (gcd n d)))
-    (list (/ n g) (/ d g))))
+    (cons (/ n g) (/ d g))))
 (print-rat (add-rat one-third one-third))
 ; expect 2/3
 
@@ -573,59 +580,6 @@ one-through-four
 ; expect 4
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;; Tests from Doctests ;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(begin 1)
-; expect 1
-(begin 1 2)
-; expect 2
-(define x (begin (print 1) 2))
-; expect 1 ; x
-x
-; expect 2
-
-(define x 2)
-; expect x
-x
-; expect 2
-(define x (+ 2 8))
-; expect x
-x
-; expect 10
-(define (f x) (+ x 2))
-; expect f
-(f 3)
-; expect 5
-
-(quote (+ x 2))
-; expect (+ x 2)
-
-(lambda (x) (+ x 2))
-; expect (lambda (x) (+ x 2))
-
-(if #t (print 2) (print 3))
-; expect 2
-(if #f (print 2) (print 3))
-; expect 3
-
-(and #f (print 1))
-; expect #f
-(and (print 1) (print 2) (print 3) (print 4) 3 #f)
-; expect 1; 2; 3; 4; #f
-
-(or 10 (print 1))
-; expect 10
-(or #f 2 3 #t #f)
-; expect 2
-
-(cond (#f (print 2)) (#t (print 3)))
-; expect 3
-
-(let ((x 2) (y 3)) (+ x y))
-; expect 5
-
 ;;;;;;;;;;;;;;;;;;;;
 ;;; Extra credit ;;;
 ;;;;;;;;;;;;;;;;;;;;
@@ -692,14 +646,3 @@ x
 
 (hyp 3 4)
 ; expect 5.000023178253949
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; EC Tests from Doctests ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-macro (f x) (car x))
-; expect f
-(f (1 2))
-; expect 1

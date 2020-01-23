@@ -6,29 +6,53 @@ test = {
       'cases': [
         {
           'code': r"""
-          scm> (enumerate '(3 4 5 6))
-          ((0 3) (1 4) (2 5) (3 6))
-          scm> (enumerate '(9 8 7 6 5 4))
-          ((0 9) (1 8) (2 7) (3 6) (4 5) (5 4))
+          scm> (define y 1)
+          1a9a3321b8b99a0f9291d89be986e74c
+          # locked
+          scm> (define f (mu (x) (+ x y)))
+          715124391110b4a3beec8c9ba1ec3097
+          # locked
+          scm> (define g (lambda (x y) (f (+ x x))))
+          4781badc0e77c1e0291e161d5c9bfa57
+          # locked
+          scm> (g 3 7)
+          ac8f8bf5e63b01fde95f04f5c6ce2820
+          # locked
           """,
           'hidden': False,
-          'locked': False
-        },
+          'locked': True
+        }
+      ],
+      'scored': True,
+      'setup': '',
+      'teardown': '',
+      'type': 'scheme'
+    },
+    {
+      'cases': [
         {
           'code': r"""
-          scm> (enumerate '(a b c d))
-          ((0 a) (1 b) (2 c) (3 d))
-          scm> (enumerate '())
-          ()
+          scm> (define h (mu () x))
+          h
+          scm> (define (high fn x) (fn))
+          high
+          scm> (high h 2)
+          2
+          scm> (define (f x) (mu () (lambda (y) (+ x y))))
+          f
+          scm> (define (g x) (((f (+ x 1))) (+ x 2)))
+          g
+          scm> (g 3)
+          8
+          scm> (mu ())
+          SchemeError
           """,
           'hidden': False,
           'locked': False
         }
       ],
       'scored': True,
-      'setup': r"""
-      scm> (load 'questions)
-      """,
+      'setup': '',
       'teardown': '',
       'type': 'scheme'
     }
