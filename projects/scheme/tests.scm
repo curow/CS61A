@@ -60,7 +60,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Move the following (exit) line down the file to run additional tests. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(exit)
+; (exit)
 
 
 ;;; 1.1.2
@@ -611,7 +611,7 @@ one-through-four
 (sum 1001 0)
 ; expect 501501
 
-(exit)
+; (exit)
 
 ; macro tests
 

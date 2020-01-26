@@ -111,7 +111,7 @@ class Frame(object):
         """
         # BEGIN PROBLEM 11
         if len(formals) != len(vals):
-            raise SchemeError("number of arguments doesn't fit")
+            raise SchemeError("number of arguments doesn't fit number of parameters\nparameters:{}\narguments:{}".format(formals, vals))
         else:
             child_frame = Frame(self)
             while formals is not nil:
