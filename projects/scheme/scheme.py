@@ -110,7 +110,14 @@ class Frame(object):
         <{a: 1, b: 2, c: 3} -> <Global Frame>>
         """
         # BEGIN PROBLEM 11
-        "*** YOUR CODE HERE ***"
+        if len(formals) != len(vals):
+            raise SchemeError("number of arguments doesn't fit")
+        else:
+            child_frame = Frame(self)
+            while formals is not nil:
+                child_frame.define(formals.first, vals.first)
+                formals, vals = formals.second, vals.second
+            return child_frame
         # END PROBLEM 11
 
 ##############
@@ -174,7 +181,7 @@ class LambdaProcedure(Procedure):
         """Make a frame that binds my formal parameters to ARGS, a Scheme list
         of values, for a lexically-scoped call evaluated in environment ENV."""
         # BEGIN PROBLEM 12
-        "*** YOUR CODE HERE ***"
+        return self.env.make_child_frame(self.formals, args)
         # END PROBLEM 12
 
     def __str__(self):
@@ -222,7 +229,10 @@ def do_define_form(expressions, env):
         # END PROBLEM 6
     elif isinstance(target, Pair) and scheme_symbolp(target.first):
         # BEGIN PROBLEM 10
-        "*** YOUR CODE HERE ***"
+        lambda_expressions = Pair(target.second, expressions.second)
+        procedure = do_lambda_form(lambda_expressions, env)
+        env.define(target.first, procedure)
+        return target.first
         # END PROBLEM 10
     else:
         bad_target = target.first if isinstance(target, Pair) else target
@@ -246,7 +256,8 @@ def do_lambda_form(expressions, env):
     formals = expressions.first
     check_formals(formals)
     # BEGIN PROBLEM 9
-    "*** YOUR CODE HERE ***"
+    body = expressions.second
+    return LambdaProcedure(formals, body, env)
     # END PROBLEM 9
 
 def do_if_form(expressions, env):
