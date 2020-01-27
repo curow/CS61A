@@ -109,10 +109,9 @@
          (let ((values (cadr expr))
                (body   (cddr expr)))
            ; BEGIN PROBLEM 19
-            (define params-args (zip (let-to-lambda values)))
             (cons
-              (cons 'lambda (cons (car params-args) (let-to-lambda body)))
-              (cadr params-args)
+              (cons 'lambda (cons (car (zip (let-to-lambda values))) (let-to-lambda body)))
+              (cadr (zip (let-to-lambda values)))
             )
            ; END PROBLEM 19
            ))
