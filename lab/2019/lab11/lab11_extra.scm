@@ -1,16 +1,48 @@
 (define-macro (switch expr cases)
-    'YOUR-CODE-HERE
+  (define (first-value lst) (car (car lst)))
+  (define (first-expr lst) (car (cdr (car lst))))
+  (let ((value (eval expr)))
+    (cond ((null? cases) nil)
+          ((eq? value (first-value cases)) (first-expr cases))
+          (else 
+            (let ((rest (cdr cases)))
+              `(switch ,expr ,rest)
+            )
+          )
+    )
+  )
 )
 
 (define (flatmap f x)
-  'YOUR-CODE-HERE)
+  (define (flatmap-tail f x px)
+    (if (null? x) px
+      (flatmap-tail f (cdr x) (append px (f (car x))))
+    )
+  )
+  (flatmap-tail f x nil)
+)
 
 (define (expand lst)
-  'YOUR-CODE-HERE)
+  (define (map-rule sym)
+    (cond ((eq? sym 'x) '(x r y f r))
+          ((eq? sym 'y) '(l f x l y))
+          (else (list sym))
+    )
+  )
+  (flatmap map-rule lst)
+)
 
 (define (interpret instr dist)
-  'YOUR-CODE-HERE)
-
+  (if (null? instr) nil
+    (let ((sym (car instr)))
+      (cond ((eq? sym 'f) (forward dist))
+            ((eq? sym 'l) (left 90))
+            ((eq? sym 'r) (right 90))
+      )
+      (interpret (cdr instr) dist)
+    )
+  )
+)
 (define (apply-many n f x)
   (if (zero? n)
       x
