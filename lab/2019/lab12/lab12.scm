@@ -1,4 +1,10 @@
 (define (partial-sums stream)
-  'YOUR-CODE-HERE
+  (define (helper start stream)
+    (if (null? stream) nil
+        (let ((start (+ start (car stream))))
+          (cons-stream start (helper start (cdr-stream stream)))
+        )
+    )
+  )
   (helper 0 stream)
 )
