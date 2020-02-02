@@ -51,20 +51,16 @@ CREATE TABLE sentences AS
 CREATE TABLE stacks_helper(dogs, stack_height, last_height);
 
 -- Add your INSERT INTOs here
-insert into stacks_helper select name as dogs, height as stack_height, height as last_height from dogs;
+insert into stacks_helper select name, height, height from dogs;
 insert into stacks_helper
-  select a.dogs || ", " || b.dogs, a.stack_height + b.stack_height, b.last_height
+  select a.dogs || "," || b.dogs, a.stack_height + b.stack_height, b.last_height
   from stacks_helper as a, stacks_helper as b
   where a.last_height < b.last_height and a.dogs <> b.dogs and b.last_height = b.stack_height;
 insert into stacks_helper
-  select a.dogs || ", " || b.dogs, a.stack_height + b.stack_height, b.last_height
-  from stacks_helper as a, stacks_helper as b
-  where a.last_height < b.last_height and a.dogs <> b.dogs and b.last_height = b.stack_height;
-insert into stacks_helper
-  select a.dogs || ", " || b.dogs, a.stack_height + b.stack_height, b.last_height
+  select a.dogs || "," || b.dogs, a.stack_height + b.stack_height, b.last_height
   from stacks_helper as a, stacks_helper as b
   where a.last_height < b.last_height and a.dogs <> b.dogs and b.last_height = b.stack_height;
 
 
 CREATE TABLE stacks AS
-  SELECT dogs, stack_height from stacks_helper where stack_height >= 170 order by stack_height asc;
+  SELECT;
