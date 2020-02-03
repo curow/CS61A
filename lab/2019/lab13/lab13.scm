@@ -1,2 +1,3 @@
 (define quine
-    'your-code-here)
+    '(print (eval 'quine))
+)
