@@ -14,7 +14,19 @@ def prune_min(t):
     >>> t3
     Tree(6, [Tree(3, [Tree(1)])])
     """
-    "*** YOUR CODE HERE ***"
+    if not t.branches:
+        return
+    elif len(t.branches) == 1:
+        prune_min(t.branches[0])
+    else:
+        left = t.branches[0]
+        right = t.branches[1]
+        if left.label <= right.label:
+            prune_min(left) 
+            t.branches = [left]
+        else:
+            prune_min(right)
+            t.branches = [right]
 
 # Tree Class
 class Tree:

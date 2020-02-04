@@ -11,8 +11,30 @@ def num_splits(s, d):
     >>> num_splits([1, 4, 6, 8, 2, 9, 5], 3)
     12
     """
-    "*** YOUR CODE HERE ***"
-
+    # def split(s):
+    #     """Return all the way to split the set s into two part,
+    #     order is considered"""
+    #     if not s:
+    #         return [([], [])]
+    #     else:
+    #         first = s[0]
+    #         without_first = split(s[1:])
+    #         with_first= without_first.copy()
+    #         for partition1, partition2 in without_first:
+    #             with_first.pop(0)
+    #             with_first.append((partition1 + [first], partition2))
+    #             with_first.append((partition1, partition2 + [first]))
+    #         return with_first
+    # partitions = list(filter(lambda x: abs(sum(x[0]) - sum(x[1])) <= d, split(s)))
+    # return len(partitions) // 2
+    def split_diff(s, diffs):
+        if not s:
+            return diffs
+        else:
+            return split_diff(s[1:], list(map(lambda x: x + s[0], diffs))) \
+                    + split_diff(s[1:], list(map(lambda x: x - s[0], diffs)))
+    diffs = list(filter(lambda x: abs(x) <= d, split_diff(s, [0])))
+    return len(diffs) // 2
 
 def insert(link, value, index):
     """Insert a value into a Link at the given index.
@@ -29,7 +51,13 @@ def insert(link, value, index):
     >>> insert(link, 4, 5)
     IndexError
     """
-    "*** YOUR CODE HERE ***"
+    if index < 0 or link is Link.empty:
+        raise IndexError
+    elif index == 0:
+        link.rest = Link(link.first, link.rest)
+        link.first = value
+    else:
+        insert(link.rest, value, index - 1)
 
 # Link Class
 class Link:
