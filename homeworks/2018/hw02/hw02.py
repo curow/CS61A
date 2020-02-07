@@ -149,7 +149,7 @@ def make_repeater(f, n):
     >>> make_repeater(square, 0)(5)
     5
     """
-    return accumulate(compose1, lambda x: x, n, lambda n: f) 
+    return accumulate(compose1, lambda x: x, n, lambda _: f) 
         
 
 # Q5
